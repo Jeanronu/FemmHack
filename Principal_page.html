@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tell Me! <3</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+</head>
+<body>
+  <div for="rangeInput" id="page1">
+    <div class="wrapper">
+      <h1>How are you feeling today!?</h1>
+      <div class="section">
+        <ul class="emojis">
+          <li class="slide-emoji"><img src="https://em-content.zobj.net/thumbs/160/apple/325/pouting-face_1f621.png" alt=""></li>
+          <li><img src="https://em-content.zobj.net/thumbs/160/apple/325/sad-but-relieved-face_1f625.png" alt=""></li>
+          <li><img src="https://em-content.zobj.net/thumbs/160/apple/325/confused-face_1f615.png" alt=""></li>
+          <li><img src="https://em-content.zobj.net/thumbs/160/apple/325/smiling-face-with-smiling-eyes_1f60a.png" alt=""></li>
+          <li><img src="https://em-content.zobj.net/thumbs/160/apple/325/squinting-face-with-tongue_1f61d.png" alt=""></li>
+        </ul>
+      </div>
+      <div class="slider">
+        <div class="thumb"><span></span></div>
+        <div class="progress-bar"></div>
+        <input type="range" min="0" value="0" max="100" id="rangeInput">
+      </div>
+      <button class="next_button"><a href="#" onclick="showBlock()";>Next</a></button>
+    </div>
+  </div>
+
+  <div id="angry" class="hidden">
+    <h1 style="color: black;">Make your angryness go out!!!</h1>
+    <h2>Post what makes you angry:</h2>
+    <div class="sticky-notes">
+      <div class="sticky-note">
+        <textarea id="note" rows="5" style="width: 80%; height: 50%;" placeholder="Write your note here (Max 500 words)"></textarea>
+        <button onclick="submitNote()">Post Note</button>
+      </div>
+    </div>
+    <div id="display-notes">
+
+    </div>
+  </div>
+
+  <div id="sad" class="hidden">
+    <h1>Don't be sad!!! :3</h1>
+    <h3>Here are some quotes uwu</h3>
+    <div class="container">
+      <div class="card active">
+        <p class="quote">❝The future belongs to those who believe in the beauty of their dreams.❞</p>
+        <p class="author">― Eleanor Roosevelt</p>
+      </div>
+      <div class="card">
+        <p class="quote">❝Believe in yourself and all that you are. Know that there is something inside you that is greater than any obstacle.❞</p>
+        <p class="author">― Christian D. Larson</p>
+      </div>
+      <div class="card">
+        <p class="quote">❝Don't watch the clock; do what it does. Keep going.❞</p>
+        <p class="author">― Sam Levenson</p>
+      </div>
+      <div class="card">
+        <p class="quote">❝Most of the important things in the world have been accomplished by people who have kept on trying when there seemed to be no hope at all.❞</p>
+        <p class="author">― Dale Carnegie</p>
+      </div>
+      <div class="card">
+        <p class="quote">❝I have failed over and over and over again in my life and that is why I succeed.❞</p>
+        <p class="author">― Michael Jordan</p>
+      </div>
+      <div class="card">
+        <p class="quote">❝ Failure is the condiment that gives success its flavor.❞</p>
+        <p class="author">― Truman Capote</p>
+      </div>
+      <div class="card">
+        <p class="quote">❝ The greater part of our happiness or misery depends upon our dispositions, and not upon our circumstances.❞</p>
+        <p class="author">― Martha Washington</p>
+      </div>
+    </div>
+    <div class="btn-container">
+      <div id="prev-btn" class="btn">Previous</div>
+      <div id="next-btn" class="btn">Next</div>
+    </div>
+  </div>
+
+  <div id="meh" class="hidden">
+    <h1 style="font-size: 3em;">Feeling "meh"?</h1>
+    <div class="title-container">
+      <svg viewBox="0 0 960 80">
+        <symbol id="s-text">
+          <text text-anchor="middle" x="50%" y="80%">Come and let's DANCE</text>
+        </symbol>
+    
+        <g class = "g-ants">
+          <use xlink:href="#s-text" class="text-copy"></use>
+          <use xlink:href="#s-text" class="text-copy"></use>
+          <use xlink:href="#s-text" class="text-copy"></use>
+          <use xlink:href="#s-text" class="text-copy"></use>
+          <use xlink:href="#s-text" class="text-copy"></use>
+        </g>
+      </svg>
+    </div>
+    <div class="video-container">
+      <video style="width: 80%;" controls autoplay muted><source src="Best songs to boost your mood _ Playlist for study, working, relax .mp4" id="video"></video>
+    </div>
+  </div>
+
+  <div id="good" class="hidden">
+    <h3>Block 60-80</h3>
+    <p>This block is displayed when the range input value is between 60 and 80</p>
+  </div>
+
+  <div id="happy" class="hidden">
+    <h3>Block 80-100</h3>
+    
+    <input id="quote-input" type="text" placeholder="Send a Happy Quote to Someone!!!">
+    <div id="add-quote-btn" class="btn">Share a Smile</div>
+  </div>
+
+  <script>
+
+    // color change in slide bar
+    const body = document.querySelector("body");
+    const emoji = document.querySelector(".slide-emoji");
+    const input = document.querySelector("input");
+    const bar = document.querySelector(".progress-bar");
+    const thumb = document.querySelector(".thumb");
+    input.oninput = ()=>{
+      let sliderValue = input.value;
+      thumb.style.left = sliderValue + '%';
+      bar.style.width = sliderValue + '%';
+      if(sliderValue < 20){
+        emoji.style.marginTop = "0px";
+        body.classList.add("angry");
+        body.classList.remove("confuse");
+        body.classList.remove("like");
+      }
+      if(sliderValue >= 20){
+        emoji.style.marginTop = "-140px";
+        body.classList.add("confuse");
+        body.classList.remove("angry");
+        body.classList.remove("like");
+      }
+      if(sliderValue >= 40){
+        emoji.style.marginTop = "-280px";
+      }
+      if(sliderValue >= 60){
+        emoji.style.marginTop = "-420px";
+        body.classList.add("like");
+        body.classList.remove("confuse");
+        body.classList.remove("angry");
+      }
+      if(sliderValue >= 80){
+        emoji.style.marginTop = "-560px";
+      }
+    }
+
+    // show the hidde blocks depending in emotions
+    function showBlock() {
+        var rangeValue = document.getElementById("rangeInput").value;
+        var blocks = [document.getElementById("page1"),document.getElementById("angry"), document.getElementById("sad"), document.getElementById("meh"), document.getElementById("good"), document.getElementById("happy")];
+        for (var i = 0; i < blocks.length; i++) {
+          blocks[i].style.display = "none";
+        }
+        if (rangeValue >= 0 && rangeValue <= 20) {
+          document.getElementById("angry").style.display = "block";
+          document.getElementById("page1").style.display = "none";
+        } else if (rangeValue >= 20 && rangeValue <= 40) {
+          document.getElementById("sad").style.display = "block";
+          document.getElementById("page1").style.display = "none";
+        } else if (rangeValue >= 40 && rangeValue <= 60) {
+          document.getElementById("meh").style.display = "block";
+          document.getElementById("page1").style.display = "none";
+        } else if (rangeValue >= 60 && rangeValue <= 80) {
+          document.getElementById("good").style.display = "block";
+          document.getElementById("page1").style.display = "none";
+        } else if (rangeValue >= 80 && rangeValue <= 100) {
+          document.getElementById("happy").style.display = "block";
+          document.getElementById("page1").style.display = "none";
+        }
+      }
+
+      // Sticky notes in angry
+      function submitNote() {
+        var note = document.getElementById("note").value;
+        if (!note || note.split(" ").length > 500) {
+          alert("Please enter a note with no more than 500 words");
+          return;
+        }
+        var stickyNotes = document.querySelector(".sticky-notes");
+        var newNote = document.createElement("div");
+        newNote.classList.add("sticky-note");
+        newNote.style.backgroundColor = getRandomColor();
+        newNote.innerHTML = "<p>" + note + "</p>";
+        document.getElementById("display-notes").appendChild(newNote);
+
+        var notes = document.querySelectorAll(".sticky-note");
+        if (notes.length >= 8) {
+          var toBeRemoved = notes[1];
+          toBeRemoved.classList.add("burn-out");
+          setTimeout(function () {
+            document.getElementById("display-notes").removeChild(toBeRemoved);
+          }, 1000);
+        }
+      }
+
+      function getRandomColor() {
+        var colors = ["yellow", "pink", "lightblue", "lightgreen", "lightgray", "orange", "violet", "aqua", "darkmagenta", "lavenderblush", "lawngreen"];
+        return colors[Math.floor(Math.random() * colors.length)];
+      }
+
+    // Sad page
+      var slides = document.querySelectorAll(".card");
+      var currentSlide = 0;
+
+      document.getElementById("prev-btn").addEventListener("click", function() {
+        slides[currentSlide].classList.remove("active");
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        slides[currentSlide].classList.add("active");
+      });
+
+      document.getElementById("next-btn").addEventListener("click", function() {
+        slides[currentSlide].classList.remove("active");
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add("active");
+      });
+
+      document.getElementById("add-quote-btn").addEventListener("click", function() {
+        var newQuote = document.getElementById("quote-input").value;
+        var newCard = document.createElement("div");
+        newCard.classList.add("card");
+        newCard.innerHTML = `
+          <p class="quote">${newQuote}</p>
+          <p class="author">- Anonymous</p>
+        `;
+        document.querySelector(".container").appendChild(newCard);
+
+        slides = document.querySelectorAll(".card");
+      });
+  </script>
+
+</body>
+</html>
