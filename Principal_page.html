@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tell Me! <3</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href='https://fonts.googleapis.com/css?family=Aclonica' rel='stylesheet'>
+    <link rel="shortcut icon" href="Logo.png">
 </head>
 <body>
   <div for="rangeInput" id="page1">
@@ -31,6 +33,10 @@
   </div>
 
   <div id="angry" class="hidden">
+    <div style="position: absolute; top: 20px; left: 20px;">
+    <a href="./Principal_page.html" id="goBack">
+      <i class="fas fa-arrow-left"></i> Go back
+    </a></div>
     <h1 style="color: black;">Make your angryness go out!!!</h1>
     <h2>Post what makes you angry:</h2>
     <div class="sticky-notes">
@@ -44,7 +50,12 @@
     </div>
   </div>
 
+  <!-- cards -->
   <div id="sad" class="hidden">
+    <div style="position: absolute; top: 20px; left: 20px;">
+    <a href="./Principal_page.html" id="goBack">
+      <i class="fas fa-arrow-left"></i> Go back
+    </a></div>
     <h1>Don't be sad!!! :3</h1>
     <h3>Here are some quotes uwu</h3>
     <div class="container">
@@ -83,8 +94,11 @@
     </div>
   </div>
 
+  <!-- Title animation -->
   <div id="meh" class="hidden">
-    <h1 style="font-size: 3em;">Feeling "meh"?</h1>
+    <a href="./Principal_page.html" id="goBack">
+      <i class="fas fa-arrow-left"></i> Go back
+    </a>
     <div class="title-container">
       <svg viewBox="0 0 960 80">
         <symbol id="s-text">
@@ -106,15 +120,195 @@
   </div>
 
   <div id="good" class="hidden">
-    <h3>Block 60-80</h3>
-    <p>This block is displayed when the range input value is between 60 and 80</p>
+    <div style="position: absolute; top: 20px; left: 20px;">
+    <a href="./Principal_page.html" id="goBack">
+      <i class="fas fa-arrow-left"></i> Go back
+    </a></div>
+    <div class="title-container">
+      <svg viewBox="0 0 700 300">
+        <symbol id="s-text2">
+          <text text-anchor="middle" x="50%" y="80%">PLAY TIME</text>
+        </symbol>
+        <g class = "g-ants">
+          <use xlink:href="#s-text2" class="text-copy"></use>
+          <use xlink:href="#s-text2" class="text-copy"></use>
+          <use xlink:href="#s-text2" class="text-copy"></use>
+          <use xlink:href="#s-text2" class="text-copy"></use>
+          <use xlink:href="#s-text2" class="text-copy"></use>
+        </g>
+      </svg>
+    </div>
+    <canvas width="400" height="400" id="game"></canvas>
+<script>
+    var canvas = document.getElementById('game');
+    var context = canvas.getContext('2d');
+
+    var grid = 16;
+    var count = 0;
+      
+    var snake = {
+      x: 160,
+      y: 160,
+      
+      // snake velocity. moves one grid length every frame in either the x or y direction
+      dx: grid,
+      dy: 0,
+      
+      // keep track of all grids the snake body occupies
+      cells: [],
+      
+      // length of the snake. grows when eating an apple
+      maxCells: 4
+    };
+    var apple = {
+      x: 320,
+      y: 320
+    };
+
+    // get random whole numbers in a specific range
+    // @see https://stackoverflow.com/a/1527820/2124254
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    // game loop
+    function loop() {
+      requestAnimationFrame(loop);
+
+      // slow game loop to 15 fps instead of 60 (60/15 = 4)
+      if (++count < 4) {
+        return;
+      }
+
+      count = 0;
+      context.clearRect(0,0,canvas.width,canvas.height);
+
+      // move snake by it's velocity
+      snake.x += snake.dx;
+      snake.y += snake.dy;
+
+      // wrap snake position horizontally on edge of screen
+      if (snake.x < 0) {
+        snake.x = canvas.width - grid;
+      }
+      else if (snake.x >= canvas.width) {
+        snake.x = 0;
+      }
+      
+      // wrap snake position vertically on edge of screen
+      if (snake.y < 0) {
+        snake.y = canvas.height - grid;
+      }
+      else if (snake.y >= canvas.height) {
+        snake.y = 0;
+      }
+
+      // keep track of where snake has been. front of the array is always the head
+      snake.cells.unshift({x: snake.x, y: snake.y});
+
+      // remove cells as we move away from them
+      if (snake.cells.length > snake.maxCells) {
+        snake.cells.pop();
+      }
+
+      // draw apple
+      context.fillStyle = 'red';
+      context.fillRect(apple.x, apple.y, grid-1, grid-1);
+
+      // draw snake one cell at a time
+      context.fillStyle = 'green';
+      snake.cells.forEach(function(cell, index) {
+        
+        // drawing 1 px smaller than the grid creates a grid effect in the snake body so you can see how long it is
+        context.fillRect(cell.x, cell.y, grid-1, grid-1);  
+
+        // snake ate apple
+        if (cell.x === apple.x && cell.y === apple.y) {
+          snake.maxCells++;
+
+          // canvas is 400x400 which is 25x25 grids 
+          apple.x = getRandomInt(0, 25) * grid;
+          apple.y = getRandomInt(0, 25) * grid;
+        }
+
+        // check collision with all cells after this one (modified bubble sort)
+        for (var i = index + 1; i < snake.cells.length; i++) {
+          
+          // snake occupies same space as a body part. reset game
+          if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+            snake.x = 160;
+            snake.y = 160;
+            snake.cells = [];
+            snake.maxCells = 4;
+            snake.dx = grid;
+            snake.dy = 0;
+
+            apple.x = getRandomInt(0, 25) * grid;
+            apple.y = getRandomInt(0, 25) * grid;
+          }
+        }
+      });
+    }
+
+    document.addEventListener('keydown', function(e) {
+      // prevent snake from backtracking on itself by checking that it's 
+      // not already moving on the same axis (pressing left while moving
+      // left won't do anything, and pressing right while moving left
+      // shouldn't let you collide with your own body)
+      
+      // left arrow key
+      if (e.which === 37 && snake.dx === 0) {
+        snake.dx = -grid;
+        snake.dy = 0;
+      }
+      // up arrow key
+      else if (e.which === 38 && snake.dy === 0) {
+        snake.dy = -grid;
+        snake.dx = 0;
+      }
+      // right arrow key
+      else if (e.which === 39 && snake.dx === 0) {
+        snake.dx = grid;
+        snake.dy = 0;
+      }
+      // down arrow key
+      else if (e.which === 40 && snake.dy === 0) {
+        snake.dy = grid;
+        snake.dx = 0;
+      }
+    });
+
+    // start the game
+    requestAnimationFrame(loop);
+</script>
+    </script>
   </div>
 
-  <div id="happy" class="hidden">
-    <h3>Block 80-100</h3>
-    
-    <input id="quote-input" type="text" placeholder="Send a Happy Quote to Someone!!!">
-    <div id="add-quote-btn" class="btn">Share a Smile</div>
+  <div id="happy" class="hidden" style="padding: 30vh;">
+    <div style="position: absolute; top: 20px; left: 20px;">
+    <a href="./Principal_page.html" id="goBack">
+      <i class="fas fa-arrow-left"></i> Go back
+    </a></div>
+    <div style="position: absolute; top: 5%; left: 350px;"><h1 style="font-size: 4em;">Share your happiness!!!</h1>
+    <h2 style="font-size: 3em;">& take a coffee</h2></div>
+    <div class="containercoffee">
+      <div class="coffee-header">
+        <div class="coffee-header__buttons coffee-header__button-one"></div>
+        <div class="coffee-header__buttons coffee-header__button-two"></div>
+        <div class="coffee-header__display"></div>
+        <div class="coffee-header__details"></div>
+      </div>
+      <div class="coffee-medium">
+        <div class="coffe-medium__exit"></div>
+        <div class="coffee-medium__arm"></div>
+        <div class="coffee-medium__liquid"></div>
+        <div class="coffee-medium__smoke coffee-medium__smoke-one"></div>
+        <div class="coffee-medium__smoke coffee-medium__smoke-two"></div>
+        <div class="coffee-medium__smoke coffee-medium__smoke-three"></div>
+        <div class="coffee-medium__smoke coffee-medium__smoke-for"></div>
+        <div class="coffee-medium__cup"></div>
+      </div>
+      <div class="coffee-footer"></div>
   </div>
 
   <script>
@@ -156,29 +350,38 @@
     }
 
     // show the hidde blocks depending in emotions
-    function showBlock() {
-        var rangeValue = document.getElementById("rangeInput").value;
-        var blocks = [document.getElementById("page1"),document.getElementById("angry"), document.getElementById("sad"), document.getElementById("meh"), document.getElementById("good"), document.getElementById("happy")];
-        for (var i = 0; i < blocks.length; i++) {
-          blocks[i].style.display = "none";
-        }
-        if (rangeValue >= 0 && rangeValue <= 20) {
-          document.getElementById("angry").style.display = "block";
-          document.getElementById("page1").style.display = "none";
-        } else if (rangeValue >= 20 && rangeValue <= 40) {
-          document.getElementById("sad").style.display = "block";
-          document.getElementById("page1").style.display = "none";
-        } else if (rangeValue >= 40 && rangeValue <= 60) {
-          document.getElementById("meh").style.display = "block";
-          document.getElementById("page1").style.display = "none";
-        } else if (rangeValue >= 60 && rangeValue <= 80) {
-          document.getElementById("good").style.display = "block";
-          document.getElementById("page1").style.display = "none";
-        } else if (rangeValue >= 80 && rangeValue <= 100) {
-          document.getElementById("happy").style.display = "block";
-          document.getElementById("page1").style.display = "none";
-        }
-      }
+  document.getElementById("goBack").addEventListener("click", function() {
+  var blocks = [document.getElementById("angry"), document.getElementById("sad"), document.getElementById("meh"), document.getElementById("good"), document.getElementById("happy")];
+  for (var i = 0; i < blocks.length; i++) {
+    blocks[i].style.display = "none";
+  }
+  document.getElementById("page1").style.display = "block";
+  });
+
+function showBlock() {
+  var rangeValue = document.getElementById("rangeInput").value;
+  var blocks = [document.getElementById("page1"),document.getElementById("angry"), document.getElementById("sad"), document.getElementById("meh"), document.getElementById("good"), document.getElementById("happy")];
+  for (var i = 0; i < blocks.length; i++) {
+    blocks[i].style.display = "none";
+  }
+  if (rangeValue >= 0 && rangeValue <= 20) {
+    document.getElementById("angry").style.display = "block";
+    document.getElementById("page1").style.display = "none";
+  } else if (rangeValue >= 20 && rangeValue <= 40) {
+    document.getElementById("sad").style.display = "block";
+    document.getElementById("page1").style.display = "none";
+  } else if (rangeValue >= 40 && rangeValue <= 60) {
+    document.getElementById("meh").style.display = "block";
+    document.getElementById("page1").style.display = "none";
+  } else if (rangeValue >= 60 && rangeValue <= 80) {
+    document.getElementById("good").style.display = "block";
+    document.getElementById("page1").style.display = "none";
+  } else if (rangeValue >= 80 && rangeValue <= 100) {
+    document.getElementById("happy").style.display = "block";
+    document.getElementById("page1").style.display = "none";
+  }
+}
+
 
       // Sticky notes in angry
       function submitNote() {
@@ -237,6 +440,8 @@
 
         slides = document.querySelectorAll(".card");
       });
+</script>
+
   </script>
 
 </body>
