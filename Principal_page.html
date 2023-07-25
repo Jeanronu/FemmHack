@@ -184,8 +184,8 @@
       context.clearRect(0,0,canvas.width,canvas.height);
 
       // move snake by it's velocity
-      snake.x += snake.dx - 2;
-      snake.y += snake.dy - 2;
+      snake.x += snake.dx;
+      snake.y += snake.dy;
 
       // wrap snake position horizontally on edge of screen
       if (snake.x < 0) {
